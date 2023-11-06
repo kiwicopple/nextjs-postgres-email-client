@@ -1,10 +1,6 @@
 'use server';
 
-import { db } from '@vercel/postgres';
-import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
-import { toTitleCase } from './utils';
-import { redirect } from 'next/navigation';
+import { createPool } from "@vercel/postgres";
 
 const schema = z.object({
   subject: z.string(),
@@ -20,7 +16,7 @@ export async function sendEmail(formData: FormData) {
   });
 
   const senderId = 1; // Replace with actual senderId
-  const client = await db.connect();
+  const client = await createPool({ connectionString });
   let newEmailId;
 
   try {
@@ -74,7 +70,7 @@ export async function sendEmail(formData: FormData) {
 }
 
 export async function deleteEmail(folderName: string, emailId: string) {
-  const client = await db.connect();
+  const client = await createPool({ connectionString });
   const originalFolderName = toTitleCase(decodeURIComponent(folderName));
 
   try {

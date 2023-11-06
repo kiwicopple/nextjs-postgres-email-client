@@ -1,12 +1,22 @@
-import { sql } from '@vercel/postgres';
-import { toTitleCase } from './utils';
+import { createPool } from "@vercel/postgres";
+import { toTitleCase } from "./utils";
 
 type Folder = {
   name: string;
   email_count: string;
 };
 
+const connectionString = process.env.DATABASE_URL || "";
+
+type Primitive = string | number | boolean | undefined | null;
+
+const sql = async (q: TemplateStringsArray, ...values: Primitive[]) => {
+  const client = await createPool({ connectionString });
+  return client.sql(q, ...values);
+};
+
 export async function getFoldersWithEmailCount() {
+  // ?? How to connect to non-Vercel Postgres instance ??
   const result = await sql`
     SELECT f.name, COUNT(ef.email_id) AS email_count
     FROM folders f
