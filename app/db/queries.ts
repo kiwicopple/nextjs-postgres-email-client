@@ -7,6 +7,7 @@ type Folder = {
 };
 
 export async function getFoldersWithEmailCount() {
+  // ?? How to connect to non-Vercel Postgres instance ??
   const result = await sql`
     SELECT f.name, COUNT(ef.email_id) AS email_count
     FROM folders f
